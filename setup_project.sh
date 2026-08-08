@@ -1,24 +1,87 @@
 #!/usr/bin/env bash
-Project_Version="" #  variable to store Project Version
-Project_Dir="" # variable to store Project Directory
 
-echo "Student Attendance Tracker Setup" # Display message about the setup script
+PROJECT_VERSION=""
+PROJECT_DIR=""
 
-read -p "Type Version of the project: " Project_Version # Get user input for Project Version
-Project_Dir="../attendance_tracker_${Project_Version}" # Set Project Directory name based on user input
+cleanup() {
+    echo
+    echo "Interrupt received."
 
-echo "Creating Project Directory: ${Project_Dir}" # Display message about creating project directory
+    if [ -d "$PROJECT_DIR" ]; then
+        ARCHIVE_NAME="${PROJECT_DIR}_archive.tar.gz"
 
-mkdir -p "${Project_Dir}" # Create the project directory
-echo "Project Directory created successfully." # Display success message
+        tar -czf "$ARCHIVE_NAME" "$PROJECT_DIR"
 
-echo "Creating project files..." # Display message about creating project files
-cp attendance_tracker.py "${Project_Dir}/" # Copy main script to project directory
-mkdir -p "${Project_Dir}/helpers" # Create helpers subdirectory
-cp assets.csv "${Project_Dir}/helpers/" # Copy helper files to helpers subdirectory
-cp config.json "${Project_Dir}/helpers/"
+        rm -rf "$PROJECT_DIR"
 
-mkdir -p "${Project_Dir}/reports" # Create reports subdirectory
-cp reports.log "${Project_Dir}/reports/" # Copy reports log file to reports subdirectory
-echo "Project files created successfully." # Display success message
+        echo "Project archived as $ARCHIVE_NAME"
+        echo "Incomplete project removed."
+    fi
 
+    exit 1
+}
+
+trap cleanup SIGINT
+
+echo "Student Attendance Tracker Setup"
+
+read -p "Enter project version: " PROJECT_VERSION
+
+PROJECT_DIR="attendance_tracker_${PROJECT_VERSION}"
+
+mkdir -p "$PROJECT_DIR"/Helpers
+mkdir -p "$PROJECT_DIR"/reports
+
+cp attendance_checker.py "$PROJECT_DIR/"
+cp assets.csv "$PROJECT_DIR/Helpers/"
+cp config.json "$PROJECT_DIR/Helpers/"
+cp reports.log "$PROJECT_DIR/reports/"
+
+echo
+read -p "Would you like to change attendance thresholds? (y/n): " answer
+
+if [[ "$answer" =~ ^[Yy]$ ]]; then
+
+    read -p "Warning threshold (default 75): " warning
+    read -p "Failure threshold (default 50): " failure
+
+    warning=${warning:-75}
+    failure=${failure:-50}
+
+    sed -i "s/\"warning\"[[:space:]]*:[[:space:]]*[0-9]*/\"warning\": $warning/" \
+    "$PROJECT_DIR/Helpers/config.json"
+
+    sed -i "s/\"failure\"[[:space:]]*:[[:space:]]*[0-9]*/\"failure\": $failure/" \
+    "$PROJECT_DIR/Helpers/config.json"
+
+    echo "Attendance thresholds updated in config.json."
+    echo "Warning threshold: $warning"
+    echo "Failure threshold: $failure"
+
+fi
+
+echo
+echo "Checking Python..."
+
+if python3 --version >/dev/null 2>&1
+then
+    echo "Python3 is installed."
+else
+    echo "WARNING: Python3 not found."
+fi
+
+echo
+echo "Validating directory structure..."
+
+if [ -f "$PROJECT_DIR/attendance_checker.py" ] &&
+   [ -f "$PROJECT_DIR/Helpers/assets.csv" ] &&
+   [ -f "$PROJECT_DIR/Helpers/config.json" ] &&
+   [ -f "$PROJECT_DIR/reports/reports.log" ]
+then
+    echo "Directory structure is correct."
+else
+    echo "Directory validation failed."
+fi
+
+echo
+echo "Setup completed successfully."
