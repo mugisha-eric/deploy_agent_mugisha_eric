@@ -6,8 +6,8 @@ files into place, lets you configure attendance thresholds on the fly,
 and cleans up gracefully (with an archive) if you cancel mid-run.
 
 ## Video Walkthrough
+[Watch the walkthrough video](https://github.com//mugisha-eric/deploy_agent_mugisha_eric/demo/walkthrough.mp4)
 
-📹 **[Watch the run-through video here](PASTE_YOUR_VIDEO_LINK_HERE)**
 
 The video covers:
 - The overall approach to the script
@@ -120,9 +120,3 @@ tar -xzf attendance_tracker_{input}_archive
   corrupting `config.json`.
 - If any of the four required source files are missing from the
   script's folder, setup aborts before creating any directories.
-
-## AI Usage Disclosure
-
-AI tools were used only to generate sample test input where
-applicable. All script logic was written and debugged manually, in
-line with the assignment's AI usage guidelines.
