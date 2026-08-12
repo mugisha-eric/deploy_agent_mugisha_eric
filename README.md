@@ -6,8 +6,9 @@ files into place, lets you configure attendance thresholds on the fly,
 and cleans up gracefully (with an archive) if you cancel mid-run.
 
 ## Video Walkthrough
-[Watch the walkthrough video](https://github.com//mugisha-eric/deploy_agent_mugisha_eric/demo/walkthrough.mp4)
+[Watch the walkthrough video](https://youtu.be/frNUjAhxRDw)
 
+[![Watch the video](https://img.youtube.com/vi/frNUjAhxRDw/maxresdefault.jpg)](https://www.youtube.com/watch?v=frNUjAhxRDw)
 
 The video covers:
 - The overall approach to the script
